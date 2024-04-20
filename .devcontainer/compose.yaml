@@ -7,6 +7,9 @@ services:
     volumes:
       - ../app:/var/www/html:cached
 
+    # Runs app on the same network as the nginx container, allows "forwardPorts" in devcontainer.json function.
+    network_mode: service:nginx
+
     # Overrides default command so things don't shut down after the process ends.
     # command: sleep infinity
 
@@ -16,15 +19,26 @@ services:
   nginx:
     image: nginx:latest
     restart: unless-stopped
-    # Runs app on the same network as the database container, allows "forwardPorts" in devcontainer.json function.
-    # network_mode: service:php-fpm
     volumes:
       - ./php-fpm.conf:/etc/nginx/conf.d/default.conf
       - ../app:/var/www/html
+
+  db:
+    image: mariadb:10.4
+    restart: unless-stopped
+    volumes:
+      - mariadb-data:/var/lib/mysql
+    # Runs app on the same network as the nginx container, allows "forwardPorts" in devcontainer.json function.
+    network_mode: service:nginx
+    environment:
+      MYSQL_ROOT_PASSWORD: mariadb
+      MYSQL_DATABASE: mariadb
+      MYSQL_USER: mariadb
+      MYSQL_PASSWORD: mariadb
 
 
     # Add "forwardPorts": ["3306"] to **devcontainer.json** to forward MariaDB locally.
     # (Adding the "ports" property to this file will not forward from a Codespace.)
   
-# volumes:
-#   mariadb-data:
+volumes:
+  mariadb-data:
