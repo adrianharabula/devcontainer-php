@@ -3,23 +3,33 @@
 // https://github.com/microsoft/vscode-dev-containers/tree/main/containers/php
 // https://www.heissenberger.at/en/blog/devcontainer-forward-ports-composer/
 {
-	"name": "PHP .devcontainer",
+	"name": "PHP",
 	"dockerComposeFile": "compose.yaml",
 	"service": "php-fpm",
-	"workspaceFolder": "/var/www/html",
+	"workspaceFolder": "/app",
 
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	// "features": {},
 
 	// For use with PHP or Apache (e.g.php -S localhost:8080 or apache2ctl start)
-	"forwardPorts": [80, 3306]
+	"forwardPorts": [
+		"nginx:8080",
+		"db:3306"
+	],
 
 	// Use 'postCreateCommand' to run commands after the container is created.
 	// "postCreateCommand": "sudo chmod a+x \"$(pwd)\" && sudo rm -rf /var/www/html && sudo ln -s \"$(pwd)\" /var/www/html"
+	"postCreateCommand": "sh .devcontainer/post-create.sh",
 
 	// Configure tool-specific properties.
-	// "customizations": {},
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"xdebug.php-debug"
+			]
+		}
+	},
 
 	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
-	// "remoteUser": "root"
+	"remoteUser": "root"
 }
